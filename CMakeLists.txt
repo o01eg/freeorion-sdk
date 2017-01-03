@@ -577,6 +577,12 @@ else()
     set(BOOST_CONFIGURE_FLAGS
         debug-store=database
     )
+    if(CMAKE_CL_64)
+        list(APPEND BOOST_CONFIGURE_FLAGS address-model=64)
+    endif()
+    if("${CMAKE_VS_PLATFORM_TOOLSET}" STREQUAL "v141") # we got MS VS 2017 RC
+        set(_VS_PLATFORM_TOOLSET_VERSION "15.0")
+    endif()
     if("${_VS_PLATFORM_TOOLSET_TARGET}" STREQUAL "_xp")
         list(APPEND BOOST_CONFIGURE_FLAGS define=BOOST_USE_WINAPI_VERSION=BOOST_WINAPI_VERSION_WINXP)
     endif()
@@ -619,8 +625,6 @@ ExternalProject_Add(boost
         ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/patches/boost-0-install_pdb_files_for_debug_and_relwithdebinfo.patch
     COMMAND
         ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/patches/boost-1-remove_version_suffix_from_include_directory.patch
-    COMMAND
-        ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/patches/boost-2-prevent-multiple-definitions-of-BOOST_ASIO_ERROR_CATEGORY_NOEXCEPT.patch
     COMMAND
         ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/patches/boost-4-Print-selected-configurations-for-darwin-compiler.patch
     COMMAND

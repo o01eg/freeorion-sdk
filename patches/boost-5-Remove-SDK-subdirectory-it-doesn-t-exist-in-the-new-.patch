@@ -21,13 +21,13 @@ index a17e40f..2a0494e 100644
  import version ;
  import property-set ;
  import regex ;
-@@ -332,8 +332,7 @@ local rule init-sdk ( condition * : root ? : version + : version-feature ? )
+@@ -367,8 +367,7 @@ local rule init-sdk ( condition * : root ? : version + : version-feature ? )
  local rule init-available-sdk-versions ( condition * : root ? )
  {
      root ?= /Developer ;
 -    local sdks-root = $(root)/SDKs ;
--    local sdks = [ GLOB $(sdks-root) : MacOSX*.sdk iPhoneOS*.sdk iPhoneSimulator*.sdk ] ;
-+    local sdks = [ glob-tree $(root) : MacOSX*.sdk iPhoneOS*.sdk iPhoneSimulator*.sdk ] ;
+-    local sdks = [ GLOB $(sdks-root) : MacOSX*.sdk AppleTVOS*.sdk AppleTVSimulator*.sdk iPhoneOS*.sdk iPhoneSimulator*.sdk ] ;
++    local sdks = [ glob-tree $(root) : MacOSX*.sdk AppleTVOS*.sdk AppleTVSimulator*.sdk iPhoneOS*.sdk iPhoneSimulator*.sdk ] ;
      local result ;
      for local sdk in $(sdks)
      {
