@@ -1,0 +1,47 @@
+--- a/tools/build/src/tools/msvc.jam
++++ b/tools/build/src/tools/msvc.jam
+@@ -151,4 +151,5 @@
+         options += <command>$(command) ;
+     }
++    ECHO "notice: [msvc.init] options " $(options) ;
+     configure $(version) : $(options) ;
+ }
+@@ -750,4 +751,6 @@
+     {
+         setup-script-id = b2_$(toolset)_$(version)_$(setup-script:B) ;
++        ECHO "notice: [msvc.maybe-rewrite-setup] setup-script-id = " $(setup-script-id) ;
++        ECHO "notice: [msvc.maybe-rewrite-setup] setup-options = " $(setup-options) ;
+         if $(setup-options)-is-not-empty
+         {
+@@ -835,4 +838,8 @@
+     setup-options ?= "" ;
+     local rewrite = [ feature.get-values <rewrite-setup-scripts> : $(options) ] ;
++    ECHO "notice: [msvc.generate-setup-cmd] rewrite=" $(rewrite) ;
++    ECHO "notice: [msvc.generate-setup-cmd] version=" $(version) ;
++    ECHO "notice: [msvc.generate-setup-cmd] setup-options=" $(setup-options) ;
++    ECHO "notice: [msvc.generate-setup-cmd] setup=" $(setup) ;
+     setup = [ maybe-rewrite-setup msvc : $(setup:J=" ") : $(setup-options:J=" ") : $(version) : $(rewrite) ] ;
+     setup = $(setup-prefix)$(setup)$(setup-suffix) ;
+@@ -1079,4 +1085,5 @@
+             }
+ 
++            ECHO "notice: [msvc.1] cpu=" $(cpu) ;
+             for local c in $(cpu)
+             {
+@@ -1104,4 +1116,5 @@
+                 # i386 CPU is for the Windows Phone emulator in Visual Studio.
+                 local phone-cpu = i386 arm ;
++                ECHO "notice: [msvc.2] phone-cpu=" $(phone-cpu) ;
+                 for local c in $(phone-cpu)
+                 {
+--- a/boost/config/compiler/visualc.hpp
++++ b/boost/config/compiler/visualc.hpp
+@@ -217,6 +217,7 @@
+ // C++ 11:
+ //
+ #define BOOST_NO_TWO_PHASE_NAME_LOOKUP
++#define BOOST_NO_CXX11_CONSTEXPR
+ 
+ //
+ // prefix and suffix headers:
+

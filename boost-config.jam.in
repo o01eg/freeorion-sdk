@@ -5,9 +5,8 @@ using python
     : @PYTHON_INSTALL_DIR@/lib # libraries
     ;
 
-# detect the location of the Mac OSX SDK.
-using clang
-    : # version (not used)
-    : # cmd (compiler; not used)
-    : <root>@BOOST_OSX_SYSROOT@
-    ;
+using msvc
+	: 15.0
+	: # cmd (compiler; not used)
+	: <setup>"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat" <rewrite-setup-scripts>off
+	;

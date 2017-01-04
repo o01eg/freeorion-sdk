@@ -586,7 +586,11 @@ else()
     if("${_VS_PLATFORM_TOOLSET_TARGET}" STREQUAL "_xp")
         list(APPEND BOOST_CONFIGURE_FLAGS define=BOOST_USE_WINAPI_VERSION=BOOST_WINAPI_VERSION_WINXP)
     endif()
-    set(BOOST_TOOLSET msvc-${_VS_PLATFORM_TOOLSET_VERSION})
+	if("${_VS_PLATFORM_TOOLSET_VERSION}" STREQUAL "15.0")
+		set(BOOST_TOOLSET msvc)
+	else()
+		set(BOOST_TOOLSET msvc-${_VS_PLATFORM_TOOLSET_VERSION})
+	endif()
     set(BOOST_CONFIGURE_INSTALL_DIR ${SDK_INSTALL_DIR}/Boost)
     set(BOOST_OSX_SYSROOT "")
 endif()
@@ -629,10 +633,13 @@ ExternalProject_Add(boost
         ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/patches/boost-4-Print-selected-configurations-for-darwin-compiler.patch
     COMMAND
         ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/patches/boost-5-Remove-SDK-subdirectory-it-doesn-t-exist-in-the-new-.patch
+	COMMAND
+        ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/patches/boost-6-fix-msvc-2017-rc.patch
     CONFIGURE_COMMAND ${BOOST_CONFIGURE_COMMAND}
     BUILD_COMMAND <SOURCE_DIR>/b2 install
         toolset=${BOOST_TOOLSET}
-        -d
+        -d+2
+		--abbreviate-paths
         --debug-configuration
         --user-config=${CMAKE_BINARY_DIR}/boost-config.jam
         --without-context
@@ -650,6 +657,7 @@ ExternalProject_Add(boost
         pch=off
         -s NO_BZIP2=1
         -s NO_ZLIB=0
+		-s NO_COMPRESSION=0
         # Build documentation for boost::iostreams is outdated.
         # Starting with 1.55 the zlib dependency detection uses the boost.build
         # zlib tool, not using ZLIB_LIBPATH anymore.  The new parameters are
