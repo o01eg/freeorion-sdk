@@ -44,4 +44,21 @@
  
  //
  // prefix and suffix headers:
-
+--- a/boost/config/auto_link.hpp
++++ b/boost/config/auto_link.hpp
+@@ -161,9 +161,14 @@
+      // vc12:
+ #    define BOOST_LIB_TOOLSET "vc120"
+ 
+-# elif defined(BOOST_MSVC)
++#  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1910)
+ 
+    // vc14:
+ #  define BOOST_LIB_TOOLSET "vc140"
+ 
++# elif defined(BOOST_MSVC)
++
++// vc15:
++#  define BOOST_LIB_TOOLSET "vc150"
++
+ #  elif defined(__BORLANDC__)
