@@ -15,7 +15,7 @@ on:
 jobs:
   build-android:
     name: ${{ matrix.ndk-arch }} on ${{ matrix.arch }} Android
-    runs-on: macos-11
+    runs-on: macos-13
     strategy:
       matrix:
         ndk-arch: [x86_64]
@@ -150,13 +150,13 @@ jobs:
         pushd build-boost/Boost-for-Android/libiconv-libicu-android/${{ matrix.ndk-arch }}/
         zip -r -9 -q ../../../../FreeOrionSDK_${{ steps.cmake-dist-version.outputs.dist-version }}_Android-${{ matrix.ndk-arch }}.zip lib/libicui18n.a lib/libicuuc.a lib/libicudata.a lib/libiconv.so
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       name: Artifacts
       if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
       with:
-        name: python SDK
+        name: python ${{ matrix.ndk-arch }} SDK
         path: |
-          python39.zip
+          ${{ matrix.ndk-arch == 'x86_64' && 'python39.zip' || '' }}
           FreeOrionSDK_${{ steps.cmake-dist-version.outputs.dist-version }}_Android-${{ matrix.ndk-arch }}.zip
 
     - name: Prepare Release

@@ -31,6 +31,7 @@ function(ExternalProject_PatchSet TARGET_NAME RESULT)
         else()
             set(${RESULT} ${${RESULT}} COMMAND)
         endif()
+        set(${RESULT} ${${RESULT}} ${CMAKE_COMMAND} -E echo "Appliying patch ${_PATCH} ..." COMMAND)
         set(${RESULT} ${${RESULT}} ${PATCH_EXECUTABLE} -p1 < ${_PATCH})
     endforeach()
     if(NOT ${RESULT})
@@ -393,9 +394,10 @@ ExternalProject_Add(sdl
         -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES_}
         -DCMAKE_INSTALL_MESSAGE=${CMAKE_INSTALL_MESSAGE}
         -DSDL_STATIC=OFF
-        -DDIRECTX=OFF
-        -DRENDER_D3D=OFF
-        -DVIDEO_VULKAN=OFF
+	-DSDL_DIRECTX=OFF
+	-DSDL_RENDER_D3D=OFF
+	-DSDL_VULKAN=OFF
+	-DSDL2_DISABLE_SDL2MAIN=ON
         ${SDL_CONFIGURE_FLAGS}
     INSTALL_DIR ${SDL_CONFIGURE_INSTALL_DIR}
 )
@@ -555,7 +557,7 @@ else()
     list(GET _VS_PLATFORM_TOOLSET 0 _VS_PLATFORM_TOOLSET_VERSION)
     list(GET _VS_PLATFORM_TOOLSET 1 _VS_PLATFORM_TOOLSET_TARGET)
     math(EXPR _VS_PLATFORM_TOOLSET_VERSION "${_VS_PLATFORM_TOOLSET_VERSION}/10")
-    set(_VS_PLATFORM_TOOLSET_VERSION "${_VS_PLATFORM_TOOLSET_VERSION}.0")
+    set(_VS_PLATFORM_TOOLSET_VERSION "${_VS_PLATFORM_TOOLSET_VERSION}.3")
     set(BOOST_CONFIGURE_FLAGS
         debug-store=database
     )
@@ -570,6 +572,7 @@ else()
         list(APPEND BOOST_CONFIGURE_FLAGS define=BOOST_USE_WINAPI_VERSION=BOOST_WINAPI_VERSION_VISTA)
     endif()
     set(BOOST_TOOLSET msvc-${_VS_PLATFORM_TOOLSET_VERSION})
+    message(STATUS "Boost toolset is msvc-${_VS_PLATFORM_TOOLSET_VERSION} for ${CMAKE_VS_PLATFORM_TOOLSET}")
     set(BOOST_OSX_SYSROOT "")
 endif()
 
@@ -617,7 +620,7 @@ ExternalProject_Add(boost
     BUILD_COMMAND <SOURCE_DIR>/b2 install
         toolset=${BOOST_TOOLSET}
         -j${BOOST_PARALLEL_JOBS}
-        -d
+        -d 2
         --layout=system
         # ToDo: Remove --no-cmake-config in boost 1.71
         --no-cmake-config
