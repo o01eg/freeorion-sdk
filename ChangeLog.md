@@ -2,6 +2,10 @@
 
 Notable changes to the FreeOrionSDK project will be documented in this file.
 
+## v17 - 2024-12-23
+
+- ...
+
 ## v14 - 2023-04-25
 
 - Update boost version to 1.82
