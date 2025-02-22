@@ -2,6 +2,10 @@
 
 Notable changes to the FreeOrionSDK project will be documented in this file.
 
+## v18 - 2025-02-22
+
+- Unify Python and Python-cmake versions
+
 ## v15 - 2025-01-27
 
 - Update boost version to 1.87
