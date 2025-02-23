@@ -2,6 +2,10 @@
 
 Notable changes to the FreeOrionSDK project will be documented in this file.
 
+## v20 - 2025-02-23
+
+- Python 3.11
+
 ## v19 - 2025-02-22
 
 - Python 3.10
