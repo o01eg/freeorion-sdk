@@ -638,7 +638,7 @@ ExternalProject_Add(boost
         --no-cmake-config
         --debug-configuration
         --abbreviate-paths
-        --user-config=${CMAKE_BINARY_DIR}/boost-config.jam
+        user-config=${CMAKE_BINARY_DIR}/boost-config.jam
         --without-context
         --without-coroutine
         --without-fiber
