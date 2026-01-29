@@ -622,11 +622,17 @@ ExternalProject_Add(boost
     BUILD_IN_SOURCE 1
     ${BOOST_PATCHSET}
     CONFIGURE_COMMAND ${BOOST_CONFIGURE_COMMAND}
+    COMMAND ${CMAKE_COMMAND} -E echo "Starting --help output"
     COMMAND <SOURCE_DIR>/b2 --help
+    COMMAND ${CMAKE_COMMAND} -E echo "Starting -v output"
+    COMMAND <SOURCE_DIR>/b2 -v
+    COMMAND ${CMAKE_COMMAND} -E echo "Starting --version output"
+    COMMAND <SOURCE_DIR>/b2 --version
+    COMMAND ${CMAKE_COMMAND} -E echo "Finished output"
     BUILD_COMMAND <SOURCE_DIR>/b2 install
         toolset=${BOOST_TOOLSET}
         -j${BOOST_PARALLEL_JOBS}
-        -d
+        -d2
         --layout=system
         # ToDo: Remove --no-cmake-config in boost 1.71
         --no-cmake-config
