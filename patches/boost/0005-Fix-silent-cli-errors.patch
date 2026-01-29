@@ -1,0 +1,48 @@
+diff --git a/tools/build/src/engine/jam.cpp b/src/engine/jam.cpp
+index aac7c616d1..b1811bbfb4 100644
+--- a/tools/build/src/engine/jam.cpp
++++ b/tools/build/src/engine/jam.cpp
+@@ -313,8 +313,8 @@ int guarded_main(int argc, char * argv[])
+ 				   "after which they are stopped.");
+ 
+ 	cli |= lyra::opt(
+-		[](const std::string & x) {
+-			globs.max_buf = std::stoi(x) * 1024; /* convert to kb */
++		[](int x) {
++			globs.max_buf = x * 1024; /* convert to kb */
+ 		},
+ 		"x")
+ 			   .name("-m")
+diff --git a/tools/build/src/engine/mod_args.cpp b/tools/build/src/engine/mod_args.cpp
+index 9d361b32c0..dfe3f514aa 100644
+--- a/tools/build/src/engine/mod_args.cpp
++++ b/tools/build/src/engine/mod_args.cpp
+@@ -127,12 +127,25 @@ lyra::cli & lyra_cli() { return args_reg::ref().cli; }
+ void process_args(bool silent)
+ {
+ 	args_reg::ref().reparse();
+-	if (!silent && globs.display_help)
++	if (silent)
++		return;
++
++	std::ostringstream out;
++	int return_code = EXITOK;
++	bool stop = false;
++
++	if (!args_reg::ref().result->is_ok())
++	{
++		stop = true;
++		return_code = EXITBAD;
++		out << "Error: " << args_reg::ref().result->message() << '\n';
++	}
++
++	if (stop || globs.display_help)
+ 	{
+-		std::ostringstream out;
+ 		out << args_reg::ref().cli;
+ 		err_puts(out.str().c_str());
+-		b2::clean_exit(EXITOK);
++		b2::clean_exit(return_code);
+ 	}
+ }
+ 
