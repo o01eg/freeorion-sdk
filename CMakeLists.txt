@@ -411,7 +411,7 @@ ExternalProject_Add(boost
 		--user-config=${CMAKE_BINARY_DIR}/boost-config.jam
         toolset=${BOOST_TOOLSET}
         -j${BOOST_PARALLEL_JOBS}
-        -d5
+        -d2
         --layout=system
         # ToDo: Remove --no-cmake-config in boost 1.71
         --no-cmake-config
