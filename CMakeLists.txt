@@ -408,6 +408,7 @@ ExternalProject_Add(boost
     COMMAND <SOURCE_DIR>/b2 --version
     COMMAND ${CMAKE_COMMAND} -E echo "Finished output"
     BUILD_COMMAND <SOURCE_DIR>/b2 install
+		--user-config=${CMAKE_BINARY_DIR}/boost-config.jam
         toolset=${BOOST_TOOLSET}
         -j${BOOST_PARALLEL_JOBS}
         -d5
@@ -416,7 +417,6 @@ ExternalProject_Add(boost
         --no-cmake-config
         --debug-configuration
         --abbreviate-paths
-        --user-config=${CMAKE_BINARY_DIR}/boost-config.jam
         --without-context
         --without-coroutine
         --without-fiber
