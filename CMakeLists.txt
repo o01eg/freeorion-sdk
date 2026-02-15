@@ -556,12 +556,12 @@ ExternalProject_Add(boost-build
 if(NOT WIN32)
     if(CMAKE_OSX_ARCHITECTURES MATCHES "arm")
         set(BOOST_CONFIGURE_FLAGS
-            #macosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}
+            macosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}
             architecture=arm
         )
     else()
         set(BOOST_CONFIGURE_FLAGS
-            #macosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}
+            macosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}
             architecture=x86
         )
     endif()
