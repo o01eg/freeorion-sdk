@@ -6,6 +6,7 @@ Notable changes to the FreeOrionSDK project will be documented in this file
 
 - Update boost version to 1.88
 - Update libopenal-soft version to 1.25.1
+- Update zlib version to 1.3.2
 
 ## v17 - 2026-01-13
 
