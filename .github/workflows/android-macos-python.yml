@@ -14,35 +14,23 @@ on:
 
 jobs:
   build-android:
-    name: ${{ matrix.ndk-arch }} on ${{ matrix.arch }} Android
+    name: ${{ matrix.ndk-arch }} on Android
     runs-on: ${{ matrix.host }}
     strategy:
       matrix:
         ndk-arch: [x86_64]
-        arch: [x86_64]
-        api-level: [21]
-        target: [default]
         host: [ubuntu-24.04]
         include:
           - ndk-arch: arm64-v8a
-            arch: x86_64
-            api-level: 30
-            target: google_apis
             host: ubuntu-24.04
           - ndk-arch: x86
-            arch: x86
-            api-level: 21
-            target: default
             host: ubuntu-24.04
           - ndk-arch: armeabi-v7a
-            arch: x86_64
-            api-level: 30
-            target: google_apis
             host: ubuntu-24.04
 
     steps:
     - name: checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
 
     - name: create directories
       run: |
@@ -60,15 +48,14 @@ jobs:
         python-cmake-hash=${PYTHON_CMAKE_HASH}
         python-version=${PYTHON3_VERSION}")
 
-    - uses: actions/cache@v3
+    - uses: actions/cache@v6
       id: avd-cache
       with:
         path: |
           ~/.android/avd/*
           ~/.android/adb*
           ~/.android/debug.keystore
-        key: avd-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}
-
+        key: avd-${{ startsWith(matrix.ndk-arch, 'x86') && 21 || 30 }}-${{ startsWith(matrix.ndk-arch, 'x86') && 'default' || 'google_apis' }}-${{ matrix.ndk-arch == 'x86' && 'x86' || 'x86_64' }}
 
     - name: Enable KVM
       run: |
@@ -80,9 +67,9 @@ jobs:
       if: steps.avd-cache.outputs.cache-hit != 'true'
       uses: reactivecircus/android-emulator-runner@v2
       with:
-        api-level: ${{ matrix.api-level }}
-        target: ${{ matrix.target }}
-        arch: ${{ matrix.arch }}
+        api-level: ${{ startsWith(matrix.ndk-arch, 'x86') && 21 || 30 }}
+        target: ${{ startsWith(matrix.ndk-arch, 'x86') && 'default' || 'google_apis' }}
+        arch: ${{ matrix.ndk-arch == 'x86' && 'x86' || 'x86_64' }}
         profile: Galaxy Nexus
         cores: 2
         sdcard-path-or-size: 100M
@@ -97,7 +84,7 @@ jobs:
         channel: beta
         script: echo "Generated AVD snapshot for caching."
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
       with:
         repository: 'freeorion/python-cmake-buildsystem'
         ref: '${{ steps.cmake-dist-version.outputs.python-cmake-hash }}'
@@ -106,9 +93,9 @@ jobs:
     - name: run action
       uses: reactivecircus/android-emulator-runner@v2
       with:
-        api-level: ${{ matrix.api-level }}
-        target: ${{ matrix.target }}
-        arch: ${{ matrix.arch }}
+        api-level: ${{ startsWith(matrix.ndk-arch, 'x86') && 21 || 30 }}
+        target: ${{ startsWith(matrix.ndk-arch, 'x86') && 'default' || 'google_apis' }}
+        arch: ${{ matrix.ndk-arch == 'x86' && 'x86' || 'x86_64' }}
         profile: Galaxy Nexus
         cores: 2
         ram-size: 2048M
@@ -141,10 +128,10 @@ jobs:
         zip -r -9 -q ../../FreeOrionSDK_${{ steps.cmake-dist-version.outputs.dist-version }}_Android-${{ matrix.ndk-arch }}.zip include/ lib/libpython3.10.a bin/python
         cd ..
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
       with:
         repository: 'moritz-wundke/Boost-for-Android'
-        ref: '529027ab2f1253f17797d364fb6f456d57dc9d5e'
+        ref: '51924ec5533a4fefb5edf99feaeded794c06a4fb'
         path: 'build-boost/Boost-for-Android'
 
     - name: Download Boost
@@ -169,7 +156,7 @@ jobs:
         pushd build-boost/Boost-for-Android/libiconv-libicu-android/${{ matrix.ndk-arch }}/
         zip -r -9 -q ../../../../FreeOrionSDK_${{ steps.cmake-dist-version.outputs.dist-version }}_Android-${{ matrix.ndk-arch }}.zip lib/libicui18n.a lib/libicuuc.a lib/libicudata.a lib/libiconv.so
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v6
       name: Artifacts
       if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
       with:
