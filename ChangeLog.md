@@ -2,7 +2,7 @@
 
 Notable changes to the FreeOrionSDK project will be documented in this file
 
-## v19 - ????-??-??
+## v19 - 2026-05-24
 
 - Replace B2 (former Boost.Build) with CMake
 - Update boost version to 1.91 for Android, Windows, and MacOS
