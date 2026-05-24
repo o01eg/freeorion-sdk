@@ -85,6 +85,15 @@ jobs:
         ref: '${{ steps.cmake-dist-version.outputs.python-cmake-hash }}'
         path: 'build-python/python-cmake-buildsystem'
 
+    - name: Bootstrap Python
+      run: |
+        cd build-python
+        mkdir bootstrap-build
+        mkdir bootstrap-install-prefix
+        cd bootstrap-build
+        cmake -DCMAKE_INSTALL_PREFIX:PATH=../bootstrap-install-prefix -DPYTHON_VERSION=${{ steps.cmake-dist-version.outputs.python-version }} ../python-cmake-buildsystem/
+        cmake --build . -- VERBOSE=1
+        cmake --build . --target install
     - name: run action
       uses: reactivecircus/android-emulator-runner@v2
       with:
@@ -109,17 +118,17 @@ jobs:
           mkdir ../python-install-prefix
           cd ../python-build
           # ls -lR /usr/local/lib/android/sdk/
-          cmake -DANDROID_NDK=/usr/local/lib/android/sdk/ndk/23.0.7421159/ -DCMAKE_INSTALL_PREFIX:PATH=../python-install-prefix -DCMAKE_TOOLCHAIN_FILE=/usr/local/lib/android/sdk/ndk/23.0.7421159/build/cmake/android.toolchain.cmake -DANDROID_ABI=${{ matrix.ndk-arch }} -DCMAKE_CROSSCOMPILING_EMULATOR=/home/runner/work/freeorion-sdk/freeorion-sdk/.github/workflows/adb-emu.sh -DANDROID_ALLOW_UNDEFINED_SYMBOLS=On -DENABLE_DECIMAL=Off -DENABLE_CTYPES=Off -DENABLE_CODECS_JP=OFF -DENABLE_CODECS_KR=OFF -DENABLE_CODECS_TW=OFF -DENABLE_MULTIBYTECODEC=OFF -DENABLE_CODECS_CN=OFF -DENABLE_CODECS_HK=OFF -DENABLE_CODECS_ISO2022=OFF -DBUILD_EXTENSIONS_AS_BUILTIN=On -DANDROID_PLATFORM=android-21 -DPYTHON_VERSION=${{ steps.cmake-dist-version.outputs.python-version }} ../python-cmake-buildsystem/
+          cmake -DANDROID_NDK=/usr/local/lib/android/sdk/ndk/23.0.7421159/ -DCMAKE_INSTALL_PREFIX:PATH=../python-install-prefix -DCMAKE_TOOLCHAIN_FILE=/usr/local/lib/android/sdk/ndk/23.0.7421159/build/cmake/android.toolchain.cmake -DANDROID_ABI=${{ matrix.ndk-arch }} -DCMAKE_CROSSCOMPILING_EMULATOR=/home/runner/work/freeorion-sdk/freeorion-sdk/.github/workflows/adb-emu.sh -DANDROID_ALLOW_UNDEFINED_SYMBOLS=On -DENABLE_DECIMAL=Off -DENABLE_CTYPES=Off -DENABLE_CODECS_JP=OFF -DENABLE_CODECS_KR=OFF -DENABLE_CODECS_TW=OFF -DENABLE_MULTIBYTECODEC=OFF -DENABLE_CODECS_CN=OFF -DENABLE_CODECS_HK=OFF -DENABLE_CODECS_ISO2022=OFF -DBUILD_EXTENSIONS_AS_BUILTIN=On -DANDROID_PLATFORM=android-21 -DPYTHON_VERSION=${{ steps.cmake-dist-version.outputs.python-version }} -DBUILD_PYTHON=../bootstrap-install-prefix/bin/python ../python-cmake-buildsystem/
           cmake --build . -- VERBOSE=1
           cmake --build . --target install
 
     - name: Pack Python SDK
       shell: bash
       run: |
-        cd build-python/python-install-prefix/lib/python3.10
-        zip -r -9 -q --exclude=*.pyc --exclude=*.a --exclude=*.so ../../../../python310.zip .
+        cd build-python/python-install-prefix/lib/python3.11
+        zip -r -9 -q --exclude=*.pyc --exclude=*.a --exclude=*.so ../../../../python311.zip .
         cd ../..
-        zip -r -9 -q ../../FreeOrionSDK_${{ steps.cmake-dist-version.outputs.dist-version }}_Android-${{ matrix.ndk-arch }}.zip include/ lib/libpython3.10.a bin/python
+        zip -r -9 -q ../../FreeOrionSDK_${{ steps.cmake-dist-version.outputs.dist-version }}_Android-${{ matrix.ndk-arch }}.zip include/ lib/libpython3.11.a bin/python
         cd ..
 
     - uses: actions/checkout@v6
@@ -156,7 +165,7 @@ jobs:
       with:
         name: python ${{ matrix.ndk-arch }} SDK
         path: |
-          ${{ matrix.ndk-arch == 'x86_64' && 'python310.zip' || '' }}
+          ${{ matrix.ndk-arch == 'x86_64' && 'python311.zip' || '' }}
           FreeOrionSDK_${{ steps.cmake-dist-version.outputs.dist-version }}_Android-${{ matrix.ndk-arch }}.zip
 
     - name: Prepare Release
@@ -171,6 +180,6 @@ jobs:
         name: ${{ steps.prepare-release-options.outputs.release-name }}
         draft: true
         files: |
-          python310.zip
+          python311.zip
           FreeOrionSDK_${{ steps.cmake-dist-version.outputs.dist-version }}_Android-${{ matrix.ndk-arch }}.zip
         token: ${{ secrets.RELEASE_TOKEN }}
