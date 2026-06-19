@@ -39,6 +39,10 @@ set(SDL_VERSION 2.32.10)
 set(SDL_URL https://www.libsdl.org/release/SDL2-${SDL_VERSION}.tar.gz)
 set(SDL_MD5 7b234751c91737168d88c83041ca5aa9)
 
+set(SDL3_VERSION 3.4.10)
+set(SDL3_URL https://github.com/libsdl-org/SDL/releases/download/release-${SDL3_VERSION}/SDL3-${SDL3_VERSION}.tar.gz)
+set(SDL3_MD5 8d8f2df5bc7818ec1080ce8e1611db9c)
+
 set(LIBOGG_VERSION 1.3.6)
 set(LIBOGG_URL https://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-${LIBOGG_VERSION}.tar.gz)
 set(LIBOGG_MD5 e2ab08345a440d32e88b2156cf499eb9)
